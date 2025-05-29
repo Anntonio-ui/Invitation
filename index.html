@@ -66,61 +66,88 @@
         opacity 0.8s ease, 
         max-width 0.8s ease, 
         max-height 0.8s ease;
+      margin-top: 2.5rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 6px;
+      gap: 1.5rem;
       background: white;
       border-radius: 1rem;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-      padding: 1rem;
-      margin-top: 2.5rem;
-      width: 100%;
-      max-width: 1600px;
-      height: 900px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      padding: 1.5rem;
+      max-width: 0;
+      max-height: 0;
     }
 
     #invitacion.abierto {
       opacity: 1;
-      max-width: 1600px;
+      max-width: 95vw;
+      max-height: 90vh;
+      flex-direction: row;
+      justify-content: center;
+    }
+
+    /* Imagen y video dentro de invitación */
+    #imagen-cumple {
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      object-fit: cover;
+      width: 40vw;
+      max-width: 600px;
+      height: 60vh;
       max-height: 900px;
+      transition: width 0.6s ease, height 0.6s ease;
+      cursor: default;
+      user-select: none;
     }
 
-    .fade-in {
-      animation: fadeIn 1s ease forwards;
+    #video-container {
+      position: relative;
+      width: 50vw;
+      max-width: 800px;
+      height: 60vh;
+      max-height: 900px;
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      overflow: hidden;
+      transition: width 0.6s ease, height 0.6s ease;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Imagen y video ocupan todo el espacio y se adaptan */
-    #invitacion img,
-    #invitacion iframe {
+    #video-container iframe {
       width: 100%;
       height: 100%;
+      border: none;
       border-radius: 1rem;
       object-fit: cover;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
 
-    #invitacion > .contenedor-media {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      gap: 1rem;
+    /* Botón grande de play para móviles */
+    #play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(236,72,153,0.85);
+      border: none;
+      border-radius: 50%;
+      width: 80px;
+      height: 80px;
+      color: white;
+      font-size: 36px;
+      cursor: pointer;
+      z-index: 10;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(236,72,153,0.8);
+      user-select: none;
     }
 
-    #invitacion > .contenedor-media > div {
-      flex: 1;
-      height: 100%;
+    /* Mostrar botón sólo en móviles (menos de 768px) */
+    @media (max-width: 767px) {
+      #play-btn {
+        display: flex;
+      }
     }
   </style>
 </head>
@@ -133,58 +160,57 @@
   </div>
 
   <!-- Contenido de la invitación -->
-  <div id="invitacion" class="fade-in">
-    <div class="contenedor-media">
-      <div>
-        <img src="linda.jpeg" alt="Cumpleañera" />
-      </div>
-      <div id="video-container">
-        <!-- Iframe se cargará aquí al abrir -->
-      </div>
+  <div id="invitacion" aria-hidden="true" tabindex="-1">
+    <img id="imagen-cumple" src="linda.jpeg" alt="Cumpleañera" draggable="false" />
+    
+    <div id="video-container">
+      <iframe id="vimeo-player" 
+        src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=0&muted=1&title=0&byline=0&portrait=0" 
+        allow="autoplay; fullscreen; picture-in-picture" 
+        allowfullscreen
+        title="Invitación de Zoe"
+      ></iframe>
+      <button id="play-btn" aria-label="Reproducir video con sonido">►</button>
     </div>
   </div>
 
   <script src="https://player.vimeo.com/api/player.js"></script>
   <script>
-    let videoCargado = false;
+    const sobre = document.getElementById("sobre");
+    const invitacion = document.getElementById("invitacion");
+    const playBtn = document.getElementById("play-btn");
+    const iframe = document.getElementById("vimeo-player");
+    const player = new Vimeo.Player(iframe);
+
+    let abierto = false;
 
     function abrirSobre() {
-      const sobre = document.getElementById("sobre");
-      const invitacion = document.getElementById("invitacion");
-      const videoContainer = document.getElementById("video-container");
-
-      if (videoCargado) return; // evitar recarga
+      if (abierto) return; // prevenir múltiples clicks
+      abierto = true;
 
       sobre.classList.add("abierto");
       invitacion.classList.add("abierto");
-      invitacion.style.display = "flex";
+      invitacion.setAttribute("aria-hidden", "false");
+      invitacion.setAttribute("tabindex", "0");
 
-      // Crear el iframe con autoplay, loop y sin muted para que suene
-      const iframe = document.createElement('iframe');
-      iframe.setAttribute('id', 'vimeo-player');
-      iframe.setAttribute('src', 'https://player.vimeo.com/video/1088636773?h=3b75ab8429&autoplay=1&loop=1&title=0&byline=0&portrait=0');
-      iframe.setAttribute('frameborder', '0');
-      iframe.setAttribute('allow', 'autoplay; fullscreen; picture-in-picture');
-      iframe.setAttribute('allowfullscreen', '');
-      iframe.setAttribute('title', 'Invitación de Zoe');
-      iframe.style.width = '100%';
-      iframe.style.height = '100%';
-      iframe.style.borderRadius = '1rem';
-      iframe.style.objectFit = 'cover';
-      iframe.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+      // En desktop, reproducir video en autoplay con sonido ON (si se puede)
+      // En móvil, dejamos video en pausa y silenciado, mostramos botón play
 
-      videoContainer.appendChild(iframe);
-
-      // Inicializar Vimeo Player para calidad y control si quieres
-      const player = new Vimeo.Player(iframe);
-
-      player.ready().then(() => {
-        player.setQuality('1080p').catch(() => {});
-        player.play();
-      });
-
-      videoCargado = true;
+      if (window.matchMedia("(pointer: coarse)").matches) {
+        // Dispositivo táctil - móvil/tablet: no autoplay con sonido
+        playBtn.style.display = "flex";
+        player.setVolume(0).then(() => player.pause());
+      } else {
+        // Desktop: autoplay con sonido
+        playBtn.style.display = "none";
+        player.setVolume(1).then(() => player.play());
+      }
     }
+
+    playBtn.addEventListener("click", () => {
+      player.setVolume(1).then(() => player.play());
+      playBtn.style.display = "none";
+    });
   </script>
 
 </body>
