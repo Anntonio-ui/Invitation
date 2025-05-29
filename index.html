@@ -5,7 +5,7 @@
   <title>Invitación Zoe</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Estilos base, igual que antes */
+    /* Estilos base */
     .sobre {
       width: 200px;
       height: 120px;
@@ -86,6 +86,8 @@
       box-shadow: 0 8px 25px rgba(0,0,0,0.15);
       padding: 1.5rem;
       transform: scale(0.9);
+      position: relative;
+      z-index: 10;
     }
 
     #invitacion.abierto {
@@ -128,6 +130,8 @@
       padding: 1rem;
       gap: 1rem;
       flex-shrink: 0;
+      cursor: pointer;
+      z-index: 20;
     }
 
     #video-container iframe {
@@ -136,16 +140,8 @@
       border: none;
       border-radius: 1rem;
       object-fit: cover;
-      pointer-events: none;
+      pointer-events: auto;
       flex-grow: 1;
-      transition: border-radius 0.3s ease;
-    }
-
-    #video-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      cursor: pointer;
-      z-index: 10;
     }
 
     #mensaje-fiesta {
@@ -173,7 +169,7 @@
       font-weight: 600;
       user-select: none;
       display: none;
-      z-index: 20;
+      z-index: 30;
       pointer-events: none;
     }
 
@@ -206,12 +202,58 @@
       background: #be185d;
     }
 
-    @media(min-width: 768px) {
-      #video-overlay {
-        display: none;
-      }
+    /* Estilos para maximizar video y contenedor (opción 2) */
+    #video-container.maximizado {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background: black !important;
+      z-index: 9999 !important;
+      padding: 0 !important;
+      cursor: default !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+      align-items: center !important;
     }
 
+    #video-container.maximizado iframe {
+      border-radius: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      pointer-events: auto !important;
+    }
+
+    /* Botón cerrar fullscreen */
+    #btn-cerrar-video {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      background: rgba(236, 72, 153, 0.85);
+      border: none;
+      color: white;
+      font-size: 1.8rem;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      z-index: 10000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    #btn-cerrar-video:hover {
+      background: rgba(190, 24, 93, 0.9);
+    }
+
+    /* Responsive adjustments */
     @media(max-width: 767px) {
       #invitacion.abierto {
         flex-direction: column;
@@ -230,9 +272,6 @@
         width: 90vw;
         height: 50vh;
         max-height: 500px;
-        flex-direction: column;
-        padding: 0.5rem;
-        gap: 0.5rem;
       }
 
       #mensaje-fiesta {
@@ -240,54 +279,6 @@
         max-width: 100%;
       }
     }
-
-    /* Estilos para pantalla completa del contenedor del video */
-    #video-container:-webkit-full-screen {
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: none !important;
-      max-height: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-    }
-
-    #video-container:-moz-full-screen {
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: none !important;
-      max-height: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-    }
-
-    #video-container:fullscreen {
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: none !important;
-      max-height: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-    }
-
-    #video-container:-ms-fullscreen {
-      width: 100vw !important;
-      height: 100vh !important;
-      max-width: none !important;
-      max-height: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-    }
-
-    #video-container iframe {
-      width: 100% !important;
-      height: 100% !important;
-      border-radius: 0 !important;
-    }
-
   </style>
 </head>
 <body class="bg-pink-100 flex flex-col items-center justify-center min-h-screen font-sans">
@@ -301,33 +292,36 @@
   <div id="invitacion" aria-hidden="true" tabindex="-1" role="dialog" aria-modal="true" aria-label="Invitación de cumpleaños">
     <button id="btn-cerrar" aria-label="Cerrar invitación">&times;</button>
     <img id="imagen-cumple" src="linda.jpeg" alt="Cumpleañera" draggable="false" />
-    <div id="video-container" aria-label="Video invitación">
+    <div id="video-container" aria-label="Video invitación" tabindex="0" role="region">
       <iframe id="vimeo-player" 
         src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=0&muted=1&title=0&byline=0&portrait=0" 
         allow="autoplay; fullscreen; picture-in-picture" 
         allowfullscreen
         title="Invitación de Zoe"
       ></iframe>
-      <div id="video-overlay" aria-label="Tocar para reproducir video y pantalla completa" tabindex="0"></div>
       <div id="mensaje-fiesta">Ven a mi fiesta 🎉</div>
       <div id="mensaje-indicacion">Toca el video para reproducir y pantalla completa</div>
     </div>
   </div>
 
+  <!-- Botón cerrar modo fullscreen del video -->
+  <button id="btn-cerrar-video" aria-label="Cerrar video maximizado">&times;</button>
+
   <script src="https://player.vimeo.com/api/player.js"></script>
   <script>
     const sobre = document.getElementById("sobre");
     const invitacion = document.getElementById("invitacion");
-    const overlay = document.getElementById("video-overlay");
-    const iframe = document.getElementById("vimeo-player");
     const videoContainer = document.getElementById("video-container");
+    const iframe = document.getElementById("vimeo-player");
     const btnCerrar = document.getElementById("btn-cerrar");
+    const btnCerrarVideo = document.getElementById("btn-cerrar-video");
     const mensajeIndicacion = document.getElementById("mensaje-indicacion");
     const player = new Vimeo.Player(iframe);
 
     let abierto = false;
     let videoSonando = false;
 
+    // Abrir la invitación
     function abrirSobre() {
       if (abierto) return;
       abierto = true;
@@ -338,15 +332,13 @@
       invitacion.setAttribute("tabindex", "0");
       invitacion.focus();
 
+      // Móvil: mostrar indicación y no autoplay
       if (window.matchMedia("(pointer: coarse)").matches) {
-        // Móvil: pausado y mute, overlay visible
         player.setVolume(0).then(() => player.pause());
-        overlay.style.display = "block";
         mensajeIndicacion.style.display = "block";
         videoSonando = false;
       } else {
         // Desktop: autoplay silenciado, luego subir volumen
-        overlay.style.display = "none";
         mensajeIndicacion.style.display = "none";
         player.setVolume(0).then(() => {
           player.play().then(() => {
@@ -361,74 +353,77 @@
       }
     }
 
-    overlay.addEventListener("click", () => {
-      if (!videoSonando) {
-        player.setVolume(1).then(() => player.play()).then(() => {
-          solicitarPantallaCompleta();
-          overlay.style.display = "none";
-          mensajeIndicacion.style.display = "none";
-          videoSonando = true;
-        });
+    // Cerrar invitación
+    function cerrarInvitacion() {
+      abierto = false;
+      sobre.classList.remove("abierto");
+      invitacion.classList.remove("abierto");
+      invitacion.setAttribute("aria-hidden", "true");
+      invitacion.setAttribute("tabindex", "-1");
+      sobre.focus();
+
+      // Pausar video y silenciar
+      player.pause();
+      player.setVolume(0);
+      mensajeIndicacion.style.display = window.matchMedia("(pointer: coarse)").matches ? "block" : "none";
+      videoSonando = false;
+
+      // Si el video está maximizado, cerrarlo también
+      if (videoContainer.classList.contains("maximizado")) {
+        cerrarVideoMaximizado();
       }
+    }
+
+    // Abrir invitación al click en el sobre
+    sobre.addEventListener("click", abrirSobre);
+    sobre.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") abrirSobre();
     });
 
-    overlay.addEventListener("keydown", (e) => {
-      if ((e.key === "Enter" || e.key === " ") && !videoSonando) {
-        e.preventDefault();
-        overlay.click();
-      }
-    });
+    // Botón cerrar invitación
+    btnCerrar.addEventListener("click", cerrarInvitacion);
 
-    btnCerrar.addEventListener("click", () => {
-      abrirCerrar(false);
-    });
-
-    document.addEventListener("keydown", (e) => {
+    // Cerrar invitación con ESC
+    document.addEventListener("keydown", e => {
       if (e.key === "Escape" && abierto) {
-        abrirCerrar(false);
+        if (videoContainer.classList.contains("maximizado")) {
+          cerrarVideoMaximizado();
+        } else {
+          cerrarInvitacion();
+        }
       }
     });
 
-    function abrirCerrar(abrir) {
-      if (abrir) {
-        abrirSobre();
-      } else {
-        abierto = false;
-        sobre.classList.remove("abierto");
-        invitacion.classList.remove("abierto");
-        invitacion.setAttribute("aria-hidden", "true");
-        invitacion.setAttribute("tabindex", "-1");
-        sobre.focus();
-
-        player.pause();
-        player.setVolume(0);
-        overlay.style.display = window.matchMedia("(pointer: coarse)").matches ? "block" : "none";
-        mensajeIndicacion.style.display = window.matchMedia("(pointer: coarse)").matches ? "block" : "none";
-        videoSonando = false;
-
-        salirPantallaCompleta();
+    // Al hacer click en el video, maximizarlo (solo si no está maximizado)
+    videoContainer.addEventListener("click", () => {
+      if (!videoContainer.classList.contains("maximizado")) {
+        maximizarVideo();
       }
+    });
+
+    // Botón cerrar modo video maximizado
+    btnCerrarVideo.addEventListener("click", cerrarVideoMaximizado);
+
+    // Función para maximizar el video y contenedor (opción 2)
+    function maximizarVideo() {
+      videoContainer.classList.add("maximizado");
+      btnCerrarVideo.style.display = "flex";
+      mensajeIndicacion.style.display = "none";
+      // Para que el iframe pueda recibir interacción ahora
+      iframe.style.pointerEvents = "auto";
+      videoSonando = true;
+      player.setVolume(1).then(() => player.play());
     }
 
-    function solicitarPantallaCompleta() {
-      const el = videoContainer;
-      if (el.requestFullscreen) {
-        el.requestFullscreen();
-      } else if (el.webkitRequestFullscreen) {
-        el.webkitRequestFullscreen();
-      } else if (el.msRequestFullscreen) {
-        el.msRequestFullscreen();
-      }
-    }
-
-    function salirPantallaCompleta() {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else if (document.webkitFullscreenElement) {
-        document.webkitExitFullscreen();
-      } else if (document.msFullscreenElement) {
-        document.msExitFullscreen();
-      }
+    // Función para cerrar modo video maximizado
+    function cerrarVideoMaximizado() {
+      videoContainer.classList.remove("maximizado");
+      btnCerrarVideo.style.display = "none";
+      mensajeIndicacion.style.display = window.matchMedia("(pointer: coarse)").matches ? "block" : "none";
+      iframe.style.pointerEvents = "none";
+      videoSonando = false;
+      player.pause();
+      player.setVolume(0);
     }
   </script>
 
