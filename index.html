@@ -5,6 +5,8 @@
   <title>Invitación Zoe</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* Estilos previos */
+
     .sobre {
       width: 200px;
       height: 120px;
@@ -62,7 +64,10 @@
       max-width: 0;
       max-height: 0;
       overflow: hidden;
-      transition: opacity 0.8s ease, max-width 0.8s ease, max-height 0.8s ease;
+      transition: 
+        opacity 0.8s ease, 
+        max-width 0.8s ease, 
+        max-height 0.8s ease;
       margin-top: 2.5rem;
       display: flex;
       flex-direction: column;
@@ -70,7 +75,7 @@
       gap: 1.5rem;
       background: white;
       border-radius: 1rem;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
       padding: 1.5rem;
     }
 
@@ -90,6 +95,7 @@
       max-width: 600px;
       height: 60vh;
       max-height: 900px;
+      transition: width 0.6s ease, height 0.6s ease;
       cursor: default;
       user-select: none;
     }
@@ -103,12 +109,15 @@
       border-radius: 1rem;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       overflow: hidden;
+      transition: width 0.6s ease, height 0.6s ease;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       background: #fff0f6;
       padding: 1rem;
-      transition: all 0.6s ease;
+      gap: 1rem;
+      flex-shrink: 0;
     }
 
     #video-container iframe {
@@ -118,6 +127,7 @@
       border-radius: 1rem;
       object-fit: cover;
       pointer-events: none;
+      flex-grow: 1;
     }
 
     #video-overlay {
@@ -130,52 +140,46 @@
     #mensaje-fiesta {
       font-family: 'Comic Sans MS', cursive, sans-serif;
       font-size: 1.8rem;
-      color: #db2777;
+      color: #db2777; /* pink-600 */
       font-weight: 700;
       text-align: center;
       user-select: none;
-      margin-top: 1rem;
+      max-width: 220px;
+      flex-shrink: 0;
     }
 
-    @media (max-width: 767px) {
+    @media(min-width: 768px) {
+      #video-overlay {
+        display: none;
+      }
+    }
+
+    @media(max-width: 767px) {
       #invitacion.abierto {
         flex-direction: column;
-        max-width: 100vw;
         max-height: none;
-        padding: 0;
+        max-width: 90vw;
+        padding: 1rem;
       }
 
       #imagen-cumple {
-        display: none;
+        width: 80vw;
+        height: auto;
+        max-height: 300px;
       }
 
-      #video-container.ampliado {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        max-width: 100vw;
-        max-height: 100vh;
-        padding: 0;
-        margin: 0;
-        border-radius: 0;
-        box-shadow: none;
-        z-index: 9999;
-      }
-
-      #video-container.ampliado iframe {
-        border-radius: 0;
+      #video-container {
+        width: 90vw;
+        height: 50vh;
+        max-height: 500px;
+        flex-direction: column;
+        padding: 0.5rem;
+        gap: 0.5rem;
       }
 
       #mensaje-fiesta {
         font-size: 1.5rem;
-        position: relative;
-        z-index: 9999;
-        background: #fff0f6;
-        width: 100%;
-        text-align: center;
-        padding: 1rem 0;
+        max-width: 100%;
       }
     }
   </style>
@@ -189,7 +193,6 @@
 
   <div id="invitacion" aria-hidden="true" tabindex="-1">
     <img id="imagen-cumple" src="linda.jpeg" alt="Cumpleañera" draggable="false" />
-    
     <div id="video-container" aria-label="Video invitación">
       <iframe id="vimeo-player" 
         src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=0&muted=1&title=0&byline=0&portrait=0" 
@@ -198,9 +201,8 @@
         title="Invitación de Zoe"
       ></iframe>
       <div id="video-overlay" aria-label="Tocar para reproducir video"></div>
+      <div id="mensaje-fiesta">Ven a mi fiesta 🎉</div>
     </div>
-    
-    <div id="mensaje-fiesta">Ven a mi fiesta 🎉</div>
   </div>
 
   <script src="https://player.vimeo.com/api/player.js"></script>
@@ -209,7 +211,6 @@
     const invitacion = document.getElementById("invitacion");
     const overlay = document.getElementById("video-overlay");
     const iframe = document.getElementById("vimeo-player");
-    const videoContainer = document.getElementById("video-container");
     const player = new Vimeo.Player(iframe);
 
     let abierto = false;
@@ -225,12 +226,12 @@
       invitacion.setAttribute("tabindex", "0");
 
       if (window.matchMedia("(pointer: coarse)").matches) {
-        // En móviles: video en pantalla completa
-        videoContainer.classList.add("ampliado");
+        // Móvil: pausado y mute, overlay visible
         player.setVolume(0).then(() => player.pause());
         overlay.style.display = "block";
         videoSonando = false;
       } else {
+        // Desktop: autoplay silenciado, luego subir volumen
         overlay.style.display = "none";
         player.setVolume(0).then(() => {
           player.play().then(() => {
