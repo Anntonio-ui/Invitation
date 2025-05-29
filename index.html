@@ -59,6 +59,20 @@
       z-index: 3;
     }
 
+    /* Nombre Zoe en el sobre */
+    .nombre-zoe {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-weight: bold;
+      color: #ec4899;
+      font-size: 1.25rem;
+      user-select: none;
+      pointer-events: none;
+      z-index: 3;
+    }
+
     #invitacion {
       opacity: 0;
       max-width: 0;
@@ -189,6 +203,7 @@
   <div id="sobre" class="sobre" onclick="abrirSobre()" role="button" aria-pressed="false" tabindex="0" onkeydown="if(event.key==='Enter' || event.key===' ') abrirSobre();">
     <div class="solapa"></div>
     <div class="sello">❤</div>
+    <span class="nombre-zoe">Zoe</span>
   </div>
 
   <div id="invitacion" aria-hidden="true" tabindex="-1">
@@ -226,9 +241,9 @@
       invitacion.setAttribute("tabindex", "0");
 
       if (window.matchMedia("(pointer: coarse)").matches) {
-        // Móvil: pausado y mute, overlay visible
+        // Móvil: video pausado, volumen 0, sin posibilidad de reproducir
         player.setVolume(0).then(() => player.pause());
-        overlay.style.display = "block";
+        overlay.style.display = "none"; // ocultamos overlay para no reproducir por click
         videoSonando = false;
       } else {
         // Desktop: autoplay silenciado, luego subir volumen
@@ -247,6 +262,10 @@
     }
 
     overlay.addEventListener("click", () => {
+      // En móvil no hacemos nada
+      if (window.matchMedia("(pointer: coarse)").matches) {
+        return;
+      }
       if (!videoSonando) {
         player.setVolume(1).then(() => player.play());
         overlay.style.display = "none";
