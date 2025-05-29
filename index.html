@@ -319,7 +319,7 @@
     const player = new Vimeo.Player(iframe);
 
     let abierto = false;
-    let videoSonando = false;
+    let videoSonando = true;
 
     // Abrir la invitación
     function abrirSobre() {
@@ -353,14 +353,6 @@
       }
     }
 
-    // Cerrar invitación
-    function cerrarInvitacion() {
-      abierto = false;
-      sobre.classList.remove("abierto");
-      invitacion.classList.remove("abierto");
-      invitacion.setAttribute("aria-hidden", "true");
-      invitacion.setAttribute("tabindex", "-1");
-      sobre.focus();
 
       // Pausar video y silenciar
       player.pause();
@@ -379,9 +371,6 @@
     sobre.addEventListener("keydown", e => {
       if (e.key === "Enter" || e.key === " ") abrirSobre();
     });
-
-    // Botón cerrar invitación
-    btnCerrar.addEventListener("click", cerrarInvitacion);
 
     // Cerrar invitación con ESC
     document.addEventListener("keydown", e => {
