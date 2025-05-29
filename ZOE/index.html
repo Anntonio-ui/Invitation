@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Invitación Minnie con Vimeo</title>
+  <title>Invitación Minnie</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .sobre {
@@ -57,23 +57,6 @@
       z-index: 3;
     }
 
-    #invitacion {
-      opacity: 0;
-      max-width: 0;
-      max-height: 0;
-      overflow: hidden;
-      transition: 
-        opacity 0.8s ease, 
-        max-width 0.8s ease, 
-        max-height 0.8s ease;
-    }
-
-    #invitacion.abierto {
-      opacity: 1;
-      max-width: 1000px; /* suficiente para expandir */
-      max-height: 600px; /* ajusta si quieres más o menos alto */
-    }
-
     .fade-in {
       animation: fadeIn 1s ease forwards;
     }
@@ -88,6 +71,12 @@
         transform: translateY(0);
       }
     }
+
+    /* Estilo para agrandar invitación */
+    .invitacion-expandida {
+      transform: scale(1.1);
+      transition: transform 0.5s ease;
+    }
   </style>
 </head>
 <body class="bg-pink-100 flex flex-col items-center justify-center min-h-screen font-sans">
@@ -99,19 +88,24 @@
   </div>
 
   <!-- Contenido de la invitación -->
-  <div id="invitacion" class="mt-10 flex flex-col md:flex-row items-center gap-6 bg-white rounded-xl shadow-xl p-6 max-w-4xl mx-auto fade-in">
-    <img src="zoe.jpeg" alt="Cumpleañera"
-         class="rounded-lg shadow-md w-60 h-80 object-cover" />
+  <div
+    id="invitacion"
+    class="hidden mt-10 flex flex-col md:flex-row items-center gap-6 bg-white rounded-xl shadow-xl p-6 max-w-4xl mx-auto fade-in"
+  >
+    <img
+      src="zoe.jpeg"
+      alt="Cumpleañera"
+      class="rounded-lg shadow-md w-60 h-80 object-cover"
+    />
 
     <div class="w-full md:w-[560px] h-[315px]">
       <iframe
-        src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&badge=0&autopause=0&player_id=0&app_id=58479&autoplay=1"
-        width="560"
-        height="315"
+        class="w-full h-full rounded-lg shadow-md"
+        src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1"
+        title="Invitación de Cumpleaños"
         frameborder="0"
         allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
         allowfullscreen
-        title="Invitación de Zoe"
       ></iframe>
     </div>
   </div>
@@ -123,13 +117,11 @@
 
       sobre.classList.add("abierto");
 
-      // Agrega clase para animar invitación expandiéndose
-      invitacion.classList.add("abierto");
-
-      // También aseguramos que esté visible si tenía clase hidden
-      invitacion.classList.remove("hidden");
+      setTimeout(() => {
+        invitacion.classList.remove("hidden");
+        invitacion.classList.add("invitacion-expandida");
+      }, 800);
     }
   </script>
-
 </body>
 </html>
