@@ -366,15 +366,15 @@
 
     // Función para solicitar pantalla completa en el contenedor del video
     function solicitarPantallaCompleta() {
-      if (videoContainer.requestFullscreen) {
-        videoContainer.requestFullscreen();
-      } else if (videoContainer.webkitRequestFullscreen) { /* Safari */
-        videoContainer.webkitRequestFullscreen();
-      } else if (videoContainer.msRequestFullscreen) { /* IE11 */
-        videoContainer.msRequestFullscreen();
-      }
-    }
-
+  const el = videoContainer;
+  if (el.requestFullscreen) {
+    el.requestFullscreen();
+  } else if (el.webkitRequestFullscreen) {
+    el.webkitRequestFullscreen();
+  } else if (el.msRequestFullscreen) {
+    el.msRequestFullscreen();
+  }
+}
     // Función para salir de pantalla completa
     function salirPantallaCompleta() {
       if (document.fullscreenElement) {
