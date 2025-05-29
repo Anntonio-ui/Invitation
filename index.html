@@ -119,58 +119,46 @@
       border: none;
       border-radius: 1rem;
       object-fit: cover;
+      pointer-events: none; /* Para que no bloquee clicks al overlay */
     }
 
-    /* Botón grande de play para móviles */
-    #play-btn {
+    /* Overlay transparente para captar clicks en móvil */
+    #video-overlay {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(236,72,153,0.85);
-      border: none;
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
-      color: white;
-      font-size: 36px;
+      top: 0; left: 0; right: 0; bottom: 0;
       cursor: pointer;
       z-index: 10;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 15px rgba(236,72,153,0.8);
-      user-select: none;
     }
 
-    /* Mostrar botón sólo en móviles (menos de 768px) */
-    @media (max-width: 767px) {
-      #play-btn {
-        display: flex;
+    /* Solo mostramos overlay en móvil */
+    @media(min-width: 768px) {
+      #video-overlay {
+        display: none;
       }
     }
+
   </style>
 </head>
 <body class="bg-pink-100 flex flex-col items-center justify-center min-h-screen font-sans">
 
   <!-- Sobre bonito -->
-  <div id="sobre" class="sobre" onclick="abrirSobre()">
+  <div id="sobre" class="sobre" onclick="abrirSobre()" role="button" aria-pressed="false" tabindex="0" onkeydown="if(event.key==='Enter' || event.key===' ') abrirSobre();">
     <div class="solapa"></div>
     <div class="sello">❤</div>
   </div>
 
   <!-- Contenido de la invitación -->
   <div id="invitacion" aria-hidden="true" tabindex="-1">
-    <img id="imagen-cumple" src="linda.jpeg" alt="Cumpleañera" draggable="false" />
+    <img id="imagen-cumple" src="zoe.jpeg" alt="Cumpleañera" draggable="false" />
     
-    <div id="video-container">
+    <div id="video-container" aria-label="Video invitación">
       <iframe id="vimeo-player" 
         src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=0&muted=1&title=0&byline=0&portrait=0" 
         allow="autoplay; fullscreen; picture-in-picture" 
         allowfullscreen
         title="Invitación de Zoe"
       ></iframe>
-      <button id="play-btn" aria-label="Reproducir video con sonido">►</button>
+      <div id="video-overlay" aria-label="Tocar para reproducir video"></div>
     </div>
   </div>
 
@@ -178,11 +166,12 @@
   <script>
     const sobre = document.getElementById("sobre");
     const invitacion = document.getElementById("invitacion");
-    const playBtn = document.getElementById("play-btn");
+    const overlay = document.getElementById("video-overlay");
     const iframe = document.getElementById("vimeo-player");
     const player = new Vimeo.Player(iframe);
 
     let abierto = false;
+    let videoSonando = false;
 
     function abrirSobre() {
       if (abierto) return; // prevenir múltiples clicks
@@ -193,23 +182,28 @@
       invitacion.setAttribute("aria-hidden", "false");
       invitacion.setAttribute("tabindex", "0");
 
-      // En desktop, reproducir video en autoplay con sonido ON (si se puede)
-      // En móvil, dejamos video en pausa y silenciado, mostramos botón play
+      // En desktop, reproducir video con sonido directo
+      // En móvil, dejar pausado y silenciado, mostrar overlay para tocar
 
       if (window.matchMedia("(pointer: coarse)").matches) {
-        // Dispositivo táctil - móvil/tablet: no autoplay con sonido
-        playBtn.style.display = "flex";
+        // móvil: pausa y mute, overlay visible
         player.setVolume(0).then(() => player.pause());
+        overlay.style.display = "block";
+        videoSonando = false;
       } else {
-        // Desktop: autoplay con sonido
-        playBtn.style.display = "none";
+        // desktop: autoplay con sonido
+        overlay.style.display = "none";
         player.setVolume(1).then(() => player.play());
+        videoSonando = true;
       }
     }
 
-    playBtn.addEventListener("click", () => {
-      player.setVolume(1).then(() => player.play());
-      playBtn.style.display = "none";
+    overlay.addEventListener("click", () => {
+      if (!videoSonando) {
+        player.setVolume(1).then(() => player.play());
+        overlay.style.display = "none";
+        videoSonando = true;
+      }
     });
   </script>
 
