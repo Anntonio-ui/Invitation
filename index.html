@@ -90,7 +90,6 @@
       max-width: 600px;
       height: 60vh;
       max-height: 900px;
-      transition: width 0.6s ease, height 0.6s ease;
       cursor: default;
       user-select: none;
     }
@@ -135,16 +134,15 @@
       font-weight: 700;
       text-align: center;
       user-select: none;
-      max-width: 220px;
-      flex-shrink: 0;
+      margin-top: 1rem;
     }
 
     @media (max-width: 767px) {
       #invitacion.abierto {
         flex-direction: column;
-        max-height: none;
         max-width: 100vw;
-        padding: 1rem;
+        max-height: none;
+        padding: 0;
       }
 
       #imagen-cumple {
@@ -153,15 +151,17 @@
 
       #video-container.ampliado {
         position: fixed;
-        top: 0; left: 0;
+        top: 0;
+        left: 0;
         width: 100vw;
         height: 100vh;
         max-width: 100vw;
         max-height: 100vh;
+        padding: 0;
+        margin: 0;
         border-radius: 0;
         box-shadow: none;
-        padding: 0;
-        z-index: 1000;
+        z-index: 9999;
       }
 
       #video-container.ampliado iframe {
@@ -170,7 +170,12 @@
 
       #mensaje-fiesta {
         font-size: 1.5rem;
-        margin-top: 1rem;
+        position: relative;
+        z-index: 9999;
+        background: #fff0f6;
+        width: 100%;
+        text-align: center;
+        padding: 1rem 0;
       }
     }
   </style>
@@ -220,7 +225,7 @@
       invitacion.setAttribute("tabindex", "0");
 
       if (window.matchMedia("(pointer: coarse)").matches) {
-        // En móviles: ampliar video
+        // En móviles: video en pantalla completa
         videoContainer.classList.add("ampliado");
         player.setVolume(0).then(() => player.pause());
         overlay.style.display = "block";
@@ -251,4 +256,3 @@
 
 </body>
 </html>
-
