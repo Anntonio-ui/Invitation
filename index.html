@@ -5,8 +5,6 @@
   <title>Invitación Zoe</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Estilos previos */
-
     .sobre {
       width: 200px;
       height: 120px;
@@ -59,7 +57,6 @@
       z-index: 3;
     }
 
-    /* Nombre Zoe en el sobre */
     .nombre-zoe {
       position: absolute;
       bottom: 10px;
@@ -78,10 +75,7 @@
       max-width: 0;
       max-height: 0;
       overflow: hidden;
-      transition: 
-        opacity 0.8s ease, 
-        max-width 0.8s ease, 
-        max-height 0.8s ease;
+      transition: opacity 0.8s ease, max-width 0.8s ease, max-height 0.8s ease;
       margin-top: 2.5rem;
       display: flex;
       flex-direction: column;
@@ -140,32 +134,18 @@
       border: none;
       border-radius: 1rem;
       object-fit: cover;
-      pointer-events: none;
       flex-grow: 1;
-    }
-
-    #video-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      cursor: pointer;
-      z-index: 10;
     }
 
     #mensaje-fiesta {
       font-family: 'Comic Sans MS', cursive, sans-serif;
       font-size: 1.8rem;
-      color: #db2777; /* pink-600 */
+      color: #db2777;
       font-weight: 700;
       text-align: center;
       user-select: none;
       max-width: 220px;
       flex-shrink: 0;
-    }
-
-    @media(min-width: 768px) {
-      #video-overlay {
-        display: none;
-      }
     }
 
     @media(max-width: 767px) {
@@ -210,12 +190,11 @@
     <img id="imagen-cumple" src="linda.jpeg" alt="Cumpleañera" draggable="false" />
     <div id="video-container" aria-label="Video invitación">
       <iframe id="vimeo-player" 
-        src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=0&muted=1&title=0&byline=0&portrait=0" 
+        src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=1&muted=0&title=0&byline=0&portrait=0" 
         allow="autoplay; fullscreen; picture-in-picture" 
         allowfullscreen
         title="Invitación de Zoe"
       ></iframe>
-      <div id="video-overlay" aria-label="Tocar para reproducir video"></div>
       <div id="mensaje-fiesta">Ven a mi fiesta 🎉</div>
     </div>
   </div>
@@ -224,12 +203,10 @@
   <script>
     const sobre = document.getElementById("sobre");
     const invitacion = document.getElementById("invitacion");
-    const overlay = document.getElementById("video-overlay");
     const iframe = document.getElementById("vimeo-player");
     const player = new Vimeo.Player(iframe);
 
     let abierto = false;
-    let videoSonando = false;
 
     function abrirSobre() {
       if (abierto) return;
@@ -240,38 +217,13 @@
       invitacion.setAttribute("aria-hidden", "false");
       invitacion.setAttribute("tabindex", "0");
 
-      if (window.matchMedia("(pointer: coarse)").matches) {
-        // Móvil: video pausado, volumen 0, sin posibilidad de reproducir
-        player.setVolume(0).then(() => player.pause());
-        overlay.style.display = "none"; // ocultamos overlay para no reproducir por click
-        videoSonando = false;
-      } else {
-        // Desktop: autoplay silenciado, luego subir volumen
-        overlay.style.display = "none";
-        player.setVolume(0).then(() => {
-          player.play().then(() => {
-            setTimeout(() => {
-              player.setVolume(1);
-              videoSonando = true;
-            }, 1000);
-          }).catch(() => {
-            videoSonando = false;
-          });
+      // Reproducimos con sonido en cualquier dispositivo tras clic
+      player.setVolume(1).then(() => {
+        player.play().catch((err) => {
+          console.warn("Error al reproducir:", err);
         });
-      }
+      });
     }
-
-    overlay.addEventListener("click", () => {
-      // En móvil no hacemos nada
-      if (window.matchMedia("(pointer: coarse)").matches) {
-        return;
-      }
-      if (!videoSonando) {
-        player.setVolume(1).then(() => player.play());
-        overlay.style.display = "none";
-        videoSonando = true;
-      }
-    });
   </script>
 
 </body>
