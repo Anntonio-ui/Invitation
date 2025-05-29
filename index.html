@@ -145,6 +145,7 @@
       top: 0; left: 0; right: 0; bottom: 0;
       cursor: pointer;
       z-index: 10;
+      outline: none;
     }
 
     #mensaje-fiesta {
@@ -203,12 +204,6 @@
     }
     #btn-cerrar:hover {
       background: #be185d;
-    }
-
-    @media(min-width: 768px) {
-      #video-overlay {
-        display: none;
-      }
     }
 
     @media(max-width: 767px) {
@@ -297,13 +292,14 @@
         videoSonando = false;
       } else {
         // Desktop: autoplay silenciado, luego subir volumen
-        overlay.style.display = "none";
+        overlay.style.display = "block";  // mostrar siempre el overlay para que funcione click fullscreen
         mensajeIndicacion.style.display = "none";
         player.setVolume(0).then(() => {
           player.play().then(() => {
             setTimeout(() => {
               player.setVolume(1);
               videoSonando = true;
+              overlay.style.display = "none"; // Oculta overlay si ya está sonando
             }, 1000);
           }).catch(() => {
             videoSonando = false;
@@ -313,16 +309,20 @@
     }
 
     overlay.addEventListener("click", () => {
-  if (!videoSonando) {
-    player.setVolume(1).then(() => player.play()).then(() => {
-      solicitarPantallaCompleta();
-      overlay.style.display = "none";
-      mensajeIndicacion.style.display = "none";
-      videoSonando = true;
+      if (!videoSonando) {
+        player.setVolume(1).then(() => {
+          return player.play();
+        }).then(() => {
+          solicitarPantallaCompleta();
+          overlay.style.display = "none";
+          mensajeIndicacion.style.display = "none";
+          videoSonando = true;
+        }).catch((error) => {
+          console.error("Error al reproducir video:", error);
+        });
       }
     });
 
-    // Permitir usar teclado para activar video overlay
     overlay.addEventListener("keydown", (e) => {
       if ((e.key === "Enter" || e.key === " ") && !videoSonando) {
         e.preventDefault();
@@ -330,12 +330,10 @@
       }
     });
 
-    // Botón cerrar invitación
     btnCerrar.addEventListener("click", () => {
       abrirCerrar(false);
     });
 
-    // Cerrar invitación al presionar ESC
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && abierto) {
         abrirCerrar(false);
@@ -353,7 +351,6 @@
         invitacion.setAttribute("tabindex", "-1");
         sobre.focus();
 
-        // Pausar video y silenciar
         player.pause();
         player.setVolume(0);
         overlay.style.display = window.matchMedia("(pointer: coarse)").matches ? "block" : "none";
@@ -366,26 +363,26 @@
 
     // Función para solicitar pantalla completa en el contenedor del video
     function solicitarPantallaCompleta() {
-  const el = videoContainer;
-  if (el.requestFullscreen) {
-    el.requestFullscreen();
-  } else if (el.webkitRequestFullscreen) {
-    el.webkitRequestFullscreen();
-  } else if (el.msRequestFullscreen) {
-    el.msRequestFullscreen();
-  }
-}
+      const el = videoContainer;
+      if (el.requestFullscreen) {
+        el.requestFullscreen();
+      } else if (el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+      } else if (el.msRequestFullscreen) {
+        el.msRequestFullscreen();
+      }
+    }
+
     // Función para salir de pantalla completa
     function salirPantallaCompleta() {
       if (document.fullscreenElement) {
         document.exitFullscreen();
       } else if (document.webkitFullscreenElement) { /* Safari */
         document.webkitExitFullscreen();
-      } else if (document.msFullscreenElement) { /* IE11 */
+      } else if (document.msFullscreenElement) {
         document.msExitFullscreen();
       }
     }
   </script>
-
 </body>
 </html>
