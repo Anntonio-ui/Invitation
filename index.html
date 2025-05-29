@@ -313,12 +313,12 @@
     }
 
     overlay.addEventListener("click", () => {
-      if (!videoSonando) {
-        player.setVolume(1).then(() => player.play());
-        overlay.style.display = "none";
-        mensajeIndicacion.style.display = "none";
-        videoSonando = true;
-        solicitarPantallaCompleta();
+  if (!videoSonando) {
+    player.setVolume(1).then(() => player.play()).then(() => {
+      solicitarPantallaCompleta();
+      overlay.style.display = "none";
+      mensajeIndicacion.style.display = "none";
+      videoSonando = true;
       }
     });
 
