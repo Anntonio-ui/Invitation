@@ -138,6 +138,7 @@
       object-fit: cover;
       pointer-events: none;
       flex-grow: 1;
+      transition: border-radius 0.3s ease;
     }
 
     #video-overlay {
@@ -145,7 +146,6 @@
       top: 0; left: 0; right: 0; bottom: 0;
       cursor: pointer;
       z-index: 10;
-      outline: none;
     }
 
     #mensaje-fiesta {
@@ -206,6 +206,12 @@
       background: #be185d;
     }
 
+    @media(min-width: 768px) {
+      #video-overlay {
+        display: none;
+      }
+    }
+
     @media(max-width: 767px) {
       #invitacion.abierto {
         flex-direction: column;
@@ -234,6 +240,54 @@
         max-width: 100%;
       }
     }
+
+    /* Estilos para pantalla completa del contenedor del video */
+    #video-container:-webkit-full-screen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    #video-container:-moz-full-screen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    #video-container:fullscreen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    #video-container:-ms-fullscreen {
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: none !important;
+      max-height: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+    }
+
+    #video-container iframe {
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: 0 !important;
+    }
+
   </style>
 </head>
 <body class="bg-pink-100 flex flex-col items-center justify-center min-h-screen font-sans">
@@ -292,14 +346,13 @@
         videoSonando = false;
       } else {
         // Desktop: autoplay silenciado, luego subir volumen
-        overlay.style.display = "block";  // mostrar siempre el overlay para que funcione click fullscreen
+        overlay.style.display = "none";
         mensajeIndicacion.style.display = "none";
         player.setVolume(0).then(() => {
           player.play().then(() => {
             setTimeout(() => {
               player.setVolume(1);
               videoSonando = true;
-              overlay.style.display = "none"; // Oculta overlay si ya está sonando
             }, 1000);
           }).catch(() => {
             videoSonando = false;
@@ -310,15 +363,11 @@
 
     overlay.addEventListener("click", () => {
       if (!videoSonando) {
-        player.setVolume(1).then(() => {
-          return player.play();
-        }).then(() => {
+        player.setVolume(1).then(() => player.play()).then(() => {
           solicitarPantallaCompleta();
           overlay.style.display = "none";
           mensajeIndicacion.style.display = "none";
           videoSonando = true;
-        }).catch((error) => {
-          console.error("Error al reproducir video:", error);
         });
       }
     });
@@ -361,7 +410,6 @@
       }
     }
 
-    // Función para solicitar pantalla completa en el contenedor del video
     function solicitarPantallaCompleta() {
       const el = videoContainer;
       if (el.requestFullscreen) {
@@ -373,16 +421,16 @@
       }
     }
 
-    // Función para salir de pantalla completa
     function salirPantallaCompleta() {
       if (document.fullscreenElement) {
         document.exitFullscreen();
-      } else if (document.webkitFullscreenElement) { /* Safari */
+      } else if (document.webkitFullscreenElement) {
         document.webkitExitFullscreen();
       } else if (document.msFullscreenElement) {
         document.msExitFullscreen();
       }
     }
   </script>
+
 </body>
 </html>
