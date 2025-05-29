@@ -190,10 +190,10 @@
     <img id="imagen-cumple" src="linda.jpeg" alt="Cumpleañera" draggable="false" />
     <div id="video-container" aria-label="Video invitación">
       <iframe id="vimeo-player" 
-  src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=1&muted=0&title=0&byline=0&portrait=0&quality=1080p" 
-  allow="autoplay; fullscreen; picture-in-picture" 
-  allowfullscreen
-  title="Invitación de Zoe"
+        src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=1&muted=0&title=0&byline=0&portrait=0&quality=1080p" 
+        allow="autoplay; fullscreen; picture-in-picture" 
+        allowfullscreen
+        title="Invitación de Zoe"
       ></iframe>
       <div id="mensaje-fiesta">Ven a mi fiesta 🎉</div>
     </div>
@@ -207,7 +207,9 @@
     const player = new Vimeo.Player(iframe);
 
     let abierto = false;
+    let usuarioPauso = false;
 
+    // Abrir sobre y reproducir video con sonido
     function abrirSobre() {
       if (abierto) return;
       abierto = true;
@@ -217,13 +219,31 @@
       invitacion.setAttribute("aria-hidden", "false");
       invitacion.setAttribute("tabindex", "0");
 
-      // Reproducimos con sonido en cualquier dispositivo tras clic
       player.setVolume(1).then(() => {
-        player.play().catch((err) => {
-          console.warn("Error al reproducir:", err);
-        });
+        player.play().catch(err => console.warn("No se pudo reproducir el video:", err));
       });
     }
+
+    // Detectar pausa manual
+    player.on('pause', function () {
+      player.getFullscreen().then(isFullscreen => {
+        if (!isFullscreen && !usuarioPauso) {
+          // Reanuda si se pausó saliendo de fullscreen
+          player.play().catch(() => {});
+        }
+      });
+    });
+
+    // Detectar si el usuario pausó manualmente
+    player.on('play', function () {
+      usuarioPauso = false;
+    });
+
+    iframe.addEventListener('click', () => {
+      player.getPaused().then(paused => {
+        usuarioPauso = paused;
+      });
+    });
   </script>
 
 </body>
