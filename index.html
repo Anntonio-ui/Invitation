@@ -137,6 +137,28 @@
       }
     }
 
+    /* AJUSTES EN MÓVIL: Video más grande, imagen más pequeña, invitación en columna */
+    @media(max-width: 767px) {
+      #invitacion.abierto {
+        flex-direction: column;
+        max-height: none;
+        max-width: 90vw;
+        padding: 1rem;
+      }
+
+      #imagen-cumple {
+        width: 80vw;
+        height: auto;
+        max-height: 300px;
+      }
+
+      #video-container {
+        width: 90vw;
+        height: 50vh;
+        max-height: 500px;
+      }
+    }
+
   </style>
 </head>
 <body class="bg-pink-100 flex flex-col items-center justify-center min-h-screen font-sans">
