@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Invitación Minnie</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .sobre {
+      width: 200px;
+      height: 120px;
+      background: #fff;
+      border: 2px solid #ec4899;
+      border-radius: 0.5rem;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .sobre:hover {
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+
+    .solapa {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60%;
+      background: #f9a8d4;
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top;
+      z-index: 2;
+      transition: transform 0.6s ease;
+    }
+
+    .sobre.abierto .solapa {
+      transform: rotateX(180deg);
+    }
+
+    .sello {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #ec4899;
+      width: 30px;
+      height: 30px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      z-index: 3;
+    }
+
+    .fade-in {
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Estilo para agrandar invitación */
+    .invitacion-expandida {
+      transform: scale(1.1);
+      transition: transform 0.5s ease;
+    }
+  </style>
+</head>
+<body class="bg-pink-100 flex flex-col items-center justify-center min-h-screen font-sans">
+
+  <!-- Sobre bonito -->
+  <div id="sobre" class="sobre" onclick="abrirSobre()">
+    <div class="solapa"></div>
+    <div class="sello">❤</div>
+  </div>
+
+  <!-- Contenido de la invitación -->
+  <div
+    id="invitacion"
+    class="hidden mt-10 flex flex-col md:flex-row items-center gap-6 bg-white rounded-xl shadow-xl p-6 max-w-4xl mx-auto fade-in"
+  >
+    <img
+      src="zoe.jpeg"
+      alt="Cumpleañera"
+      class="rounded-lg shadow-md w-60 h-80 object-cover"
+    />
+
+    <div class="w-full md:w-[560px] h-[315px]">
+      <iframe
+        class="w-full h-full rounded-lg shadow-md"
+        src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&amp;badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1"
+        title="Invitación de Cumpleaños"
+        frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
+
+  <script>
+    function abrirSobre() {
+      const sobre = document.getElementById("sobre");
+      const invitacion = document.getElementById("invitacion");
+
+      sobre.classList.add("abierto");
+
+      setTimeout(() => {
+        invitacion.classList.remove("hidden");
+        invitacion.classList.add("invitacion-expandida");
+      }, 800);
+    }
+  </script>
+</body>
+</html>
