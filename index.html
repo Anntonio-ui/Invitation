@@ -5,6 +5,8 @@
   <title>Invitación Minnie con Vimeo</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    /* ... (mismo CSS que antes, no lo repito para acortar, solo ajusta igual) */
+
     .sobre {
       width: 200px;
       height: 120px;
@@ -75,8 +77,6 @@
       border-radius: 1rem;
       box-shadow: 0 8px 25px rgba(0,0,0,0.15);
       padding: 1.5rem;
-      max-width: 0;
-      max-height: 0;
     }
 
     #invitacion.abierto {
@@ -87,7 +87,6 @@
       justify-content: center;
     }
 
-    /* Imagen y video dentro de invitación */
     #imagen-cumple {
       border-radius: 1rem;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
@@ -119,10 +118,9 @@
       border: none;
       border-radius: 1rem;
       object-fit: cover;
-      pointer-events: none; /* Para que no bloquee clicks al overlay */
+      pointer-events: none;
     }
 
-    /* Overlay transparente para captar clicks en móvil */
     #video-overlay {
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -130,14 +128,12 @@
       z-index: 10;
     }
 
-    /* Solo mostramos overlay en móvil */
     @media(min-width: 768px) {
       #video-overlay {
         display: none;
       }
     }
 
-    /* AJUSTES EN MÓVIL: Video más grande, imagen más pequeña, invitación en columna */
     @media(max-width: 767px) {
       #invitacion.abierto {
         flex-direction: column;
@@ -158,21 +154,17 @@
         max-height: 500px;
       }
     }
-
   </style>
 </head>
 <body class="bg-pink-100 flex flex-col items-center justify-center min-h-screen font-sans">
 
-  <!-- Sobre bonito -->
   <div id="sobre" class="sobre" onclick="abrirSobre()" role="button" aria-pressed="false" tabindex="0" onkeydown="if(event.key==='Enter' || event.key===' ') abrirSobre();">
     <div class="solapa"></div>
     <div class="sello">❤</div>
   </div>
 
-  <!-- Contenido de la invitación -->
   <div id="invitacion" aria-hidden="true" tabindex="-1">
     <img id="imagen-cumple" src="linda.jpeg" alt="Cumpleañera" draggable="false" />
-    
     <div id="video-container" aria-label="Video invitación">
       <iframe id="vimeo-player" 
         src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=0&muted=1&title=0&byline=0&portrait=0" 
@@ -196,7 +188,7 @@
     let videoSonando = false;
 
     function abrirSobre() {
-      if (abierto) return; // prevenir múltiples clicks
+      if (abierto) return;
       abierto = true;
 
       sobre.classList.add("abierto");
@@ -204,19 +196,26 @@
       invitacion.setAttribute("aria-hidden", "false");
       invitacion.setAttribute("tabindex", "0");
 
-      // En desktop, reproducir video con sonido directo
-      // En móvil, dejar pausado y silenciado, mostrar overlay para tocar
-
       if (window.matchMedia("(pointer: coarse)").matches) {
-        // móvil: pausa y mute, overlay visible
+        // Móvil: pausado y mute, overlay visible
         player.setVolume(0).then(() => player.pause());
         overlay.style.display = "block";
         videoSonando = false;
       } else {
-        // desktop: autoplay con sonido
+        // Desktop: autoplay silenciado, luego subir volumen
         overlay.style.display = "none";
-        player.setVolume(1).then(() => player.play());
-        videoSonando = true;
+        player.setVolume(0).then(() => {
+          player.play().then(() => {
+            // Subir volumen despúes de 1 seg para evitar bloqueo
+            setTimeout(() => {
+              player.setVolume(1);
+              videoSonando = true;
+            }, 1000);
+          }).catch(() => {
+            // En caso de error, no subir volumen
+            videoSonando = false;
+          });
+        });
       }
     }
 
