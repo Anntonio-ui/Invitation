@@ -186,18 +186,25 @@
     <span class="nombre-zoe">Zoe</span>
   </div>
 
-  <div id="invitacion" aria-hidden="true" tabindex="-1">
-    <img id="imagen-cumple" src="linda.jpeg" alt="Cumpleañera" draggable="false" />
-    <div id="video-container" aria-label="Video invitación">
-      <iframe id="vimeo-player" 
-        src="https://player.vimeo.com/video/1088636773?h=3b75ab8429&loop=1&autoplay=1&muted=0&title=0&byline=0&portrait=0&quality=1080p" 
-        allow="autoplay; fullscreen; picture-in-picture" 
-        allowfullscreen
-        title="Invitación de Zoe"
-      ></iframe>
-      <div id="mensaje-fiesta">Ven a mi fiesta 🎉</div>
+<!-- Sustituye este bloque dentro del <body> -->
+
+<div id="invitacion" aria-hidden="true" tabindex="-1">
+  <img id="imagen-cumple" src="linda.jpeg" alt="Cumpleañera" draggable="false" />
+  <div id="video-container" aria-label="Video invitación">
+    <div style="position: relative; width: 100%; height: 100%;">
+     <iframe id="vimeo-player"
+  src="https://player.vimeo.com/video/1092171622?h=586ad8d61f&title=0&byline=0&portrait=0&badge=0&autopause=0&loop=1"
+  frameborder="0"
+  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 1rem;"
+  title="Zoe Birthday"
+></iframe>
+
     </div>
+    <div id="mensaje-fiesta">Ven a mi fiesta 🎉</div>
   </div>
+</div>
+
 
   <script src="https://player.vimeo.com/api/player.js"></script>
   <script>
